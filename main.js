@@ -12,4 +12,6 @@ const app = express()
 app.use(cors())
 app.use(bodyParser.json())
 
+app.use('/form', require('./routes/form.js'))
+
 app.listen(APP_PORT, () => `Generic form manager listening on port ${APP_PORT}`)
