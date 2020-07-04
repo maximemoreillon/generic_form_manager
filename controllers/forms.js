@@ -110,5 +110,40 @@ exports.delete_form = (req, res) => {
 }
 
 exports.update_form = (req, res) => {
-  res.send('Not implemented yet')
+
+  let form_id = req.params.form_id
+    || req.params.id
+    || req.body.form_id
+    || req.body.id
+
+  if(!form_id) return res.status(400).send('Form ID not provided')
+
+
+
+  MongoClient.connect(process.env.MONGODB_URL,mongodb_options, (err, db) => {
+    if (err) return res.status(500).send('Error connecting to DB')
+
+    let query = {
+      _id: ObjectID(form_id),
+    }
+
+    delete req.body._id
+
+
+    let actions = {
+      $set: req.body
+    }
+
+    db.db(db_name)
+    .collection(collection_name)
+    .updateOne(query,actions,(err, result) => {
+      if (err) {
+        console.log(err)
+        return res.status(500).send('Error querying DB')
+      }
+      db.close()
+      res.send(result)
+    })
+  })
+
 }
