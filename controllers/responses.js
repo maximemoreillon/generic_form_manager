@@ -10,7 +10,7 @@ const mongodb_options = {
 }
 
 
-const collection_name = 'responses'
+const collection_name = 'forms'
 
 exports.get_all_responses = (req, res) => {
 
@@ -22,17 +22,14 @@ exports.get_all_responses = (req, res) => {
   MongoClient.connect(process.env.MONGODB_URL,mongodb_options, (err, db) => {
     if (err) return res.status(500).send('Error connecting to DB')
 
-    let query = {
-      form_id: form_id,
-    }
+    let query = { _id: ObjectID(form_id) }
 
     db.db(db_name)
     .collection(collection_name)
-    .find(query)
-    .toArray((err, result) => {
+    .findOne(query, (err, result) => {
       if (err) return res.status(500).send('Error querying DB')
       db.close()
-      res.send(result)
+      res.send(result.responses)
     })
   })
 
@@ -48,23 +45,22 @@ exports.create_response = (req, res) => {
   let form_id = req.params.form_id
   if(!form_id) return res.status(400).send('Form ID not provided')
 
-
-
   MongoClient.connect(process.env.MONGODB_URL,mongodb_options, (err, db) => {
     if (err) return res.status(500).send('Error connecting to DB')
 
-    let response = req.body
-    response.form_id = form_id
+    let query = { _id: ObjectID(form_id) }
+    let action = {$push: {responses: req.body}}
+
 
     db.db(db_name)
     .collection(collection_name)
-    .insertOne(response, (err, result) => {
+    .updateOne(query, action, (err, result) => {
       if (err) return res.status(500).send('Error querying DB')
       db.close()
       res.send('OK')
     })
   })
-  
+
 
 
 }
