@@ -3,7 +3,7 @@ stages:
   - deployment
 
 variables:
-  APPLICATION_NAME: generic-form-manager-front
+  APPLICATION_NAME: generic-form-manager
   SERVICE_PORT: 31785
 
 containerization:
