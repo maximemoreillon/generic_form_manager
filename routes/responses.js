@@ -9,8 +9,6 @@ router.route('/')
   .post(controller.create_response)
 
 router.route('/:response_id')
-  .get(controller.get_single_response)
-  .put(controller.update_response)
   .delete(controller.delete_response)
 
 module.exports = router

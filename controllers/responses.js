@@ -66,6 +66,15 @@ exports.create_response = (req, res) => {
 }
 
 exports.delete_response = (req, res) => {
+
+  let form_id = req.params.form_id
+  if(!form_id) return res.status(400).send('Form ID not provided')
+
+  let response_id = req.params.response_id
+  if(!response_id) return res.status(400).send('Response ID not provided')
+
+
+
   res.send('Not implemented yet')
 }
 

@@ -23,4 +23,6 @@ app.get('/', (req, res) => {
 app.use('/forms', require('./routes/forms.js'))
 app.use('/forms/:form_id/responses', require('./routes/responses.js'))
 
-app.listen(APP_PORT, () => {console.log(`Generic form manager listening on port ${APP_PORT}`)})
+app.listen(APP_PORT, () => {
+  console.log(`Generic form manager listening on port ${APP_PORT}`)
+})
