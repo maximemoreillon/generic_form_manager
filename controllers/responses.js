@@ -73,9 +73,33 @@ exports.delete_response = (req, res) => {
   let response_id = req.params.response_id
   if(!response_id) return res.status(400).send('Response ID not provided')
 
+  MongoClient.connect(process.env.MONGODB_URL,mongodb_options, (err, db) => {
+    if (err) return res.status(500).send('Error connecting to DB')
 
+    let query = { _id: ObjectID(form_id) }
 
-  res.send('Not implemented yet')
+    // Could not find a way to do it in one query...
+    db.db(db_name)
+    .collection(collection_name)
+    .findOne(query, (err, result) => {
+      if (err) return res.status(500).send('Error querying DB')
+
+      result.responses.splice(response_id,1)
+
+      let action = {$set: result}
+
+      db.db(db_name)
+      .collection(collection_name)
+      .updateOne(query, action, (err, result) => {
+        if (err) return res.status(500).send('Error querying DB')
+
+        db.close()
+
+        res.send('OK')
+      })
+    })
+  })
+
 }
 
 exports.update_response = (req, res) => {
