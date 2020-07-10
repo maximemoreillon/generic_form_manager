@@ -28,6 +28,8 @@ exports.create_form = (req, res) => {
     let form = {
       name: name,
       author_id: author_id,
+      fields: [],
+      date: new Date(),
     }
 
     db.db(db_name)
