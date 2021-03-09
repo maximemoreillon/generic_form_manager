@@ -12,8 +12,9 @@ const mongodb_options = {
 const collection_name = 'forms'
 
 function get_current_user_id(res){
-  return res.locals.user.identity.low
-    ?? res.locals.user.identity
+  return res.locals.user.identity.low // Neo4J lossless integers
+    ?? res.locals.user.identity // Neo4J disableLossLessIntegers
+    ?? res.locals.user._id // MongoDB
 }
 
 function get_form_id_from_request(req){
