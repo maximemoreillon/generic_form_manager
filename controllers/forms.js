@@ -9,13 +9,24 @@ const mongodb_options = {
   useUnifiedTopology: true,
 }
 
-
 const collection_name = 'forms'
+
+function get_current_user_id(res){
+  return res.locals.user.identity.low
+    ?? res.locals.user.identity
+}
+
+function get_form_id_from_request(req){
+  return req.params.form_id
+    ?? req.params.id
+    ?? req.query.form_id
+    ?? req.query.id
+}
 
 exports.create_form = (req, res) => {
 
   // Author
-  let author_id = res.locals.user.identity.low
+  const author_id =  get_current_user_id(res)
   if(!author_id) return res.status(400).send('User ID not provided')
 
   // Form name
@@ -45,9 +56,9 @@ exports.create_form = (req, res) => {
 
 exports.get_forms_of_user = (req, res) => {
 
-  let author_id = req.query.user_id
-    || req.query.author_id
-    || res.locals.user.identity.low
+  const author_id = req.query.user_id
+    ?? req.query.author_id
+    ?? get_current_user_id(res)
 
   MongoClient.connect(process.env.MONGODB_URL,mongodb_options, (err, db) => {
     if (err) return res.status(500).send('Error connecting to DB')
@@ -72,12 +83,7 @@ exports.get_forms_of_user = (req, res) => {
 exports.get_form = (req, res) => {
 
 
-  let form_id = req.params.form_id
-    || req.params.id
-    || req.query.form_id
-    || req.query.id
-
-
+  const form_id = get_form_id_from_request(req)
   if(!form_id) return res.status(400).send('Form ID not provided')
 
 
@@ -100,11 +106,7 @@ exports.get_form = (req, res) => {
 
 exports.get_form_fields = (req, res) => {
 
-  let form_id = req.params.form_id
-    || req.params.id
-    || req.query.form_id
-    || req.query.id
-
+  const form_id = get_form_id_from_request(req)
   if(!form_id) return res.status(400).send('Form ID not provided')
 
 
@@ -132,11 +134,7 @@ exports.get_form_fields = (req, res) => {
 
 exports.delete_form = (req, res) => {
 
-  let form_id = req.params.form_id
-    || req.params.id
-    || req.query.form_id
-    || req.query.id
-
+  const form_id = get_form_id_from_request(req)
   if(!form_id) return res.status(400).send('Form ID not provided')
 
   MongoClient.connect(process.env.MONGODB_URL,mongodb_options, (err, db) => {
@@ -158,11 +156,7 @@ exports.delete_form = (req, res) => {
 
 exports.update_form = (req, res) => {
 
-  let form_id = req.params.form_id
-    || req.params.id
-    || req.body.form_id
-    || req.body.id
-
+  const form_id = get_form_id_from_request(req)
   if(!form_id) return res.status(400).send('Form ID not provided')
 
 
